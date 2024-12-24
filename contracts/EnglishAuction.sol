@@ -44,5 +44,25 @@ contract EnglishAuction{
         emit Started();
     }
 
+    function Bid() external payable {
+        require(started,"Not started");
+        require(!ended && endAt > block.timestamp, "Ended");
+        require(msg.value > highestBid, "Value < highest");
+        if (highestBidder != address(0)){
+        bids[highestBidder] = bids[highestBidder] + highestBid; 
+        }
+        highestBid = msg.value;
+        highestBidder = msg.sender;
+
+        emit Bids(msg.sender, msg.value);
+    }
+
+    function withdraw() external {
+        uint bal = bids[msg.sender];
+        bids[msg.sender] = 0;
+        payable(msg.sender).transfer(bal);
+        emit Withdrawal(msg.sender, bal);
+    }
+
     
 }

@@ -64,5 +64,18 @@ contract EnglishAuction{
         emit Withdrawal(msg.sender, bal);
     }
 
-    
+    function end() external {
+        require(started,"not started");
+        require(!ended, "ended");
+        ended = true;
+
+        if(highestBidder !=address(0)){
+            nft.transferFrom(address(this), highestBidder, nftId);
+            seller.transfer(highestBid);
+        }else{
+            nft.transferFrom(address(this), seller, nftId);
+        }
+
+        emit End(highestBidder, highestBid );
+    }
 }
